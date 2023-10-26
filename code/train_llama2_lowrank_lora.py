@@ -156,8 +156,6 @@ train(model, tokenizer, dataset_train, dataset_val, max_tokens=256, batch_size=2
 
 model.eval()
 
-print(dataset_name.value, '| perplexity', compute_perplexity(model=model, tokenizer=tokenizer, 
-															 predictions=[s['text'] for s in dataset_val], 
-															 batch_size=1, max_length=512))
+print(dataset_name.value, '| perplexity', compute_perplexity(model=model, tokenizer=tokenizer, predictions=[s['text'] for s in dataset_val], batch_size=1, max_length=512))
 
 
