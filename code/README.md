@@ -6,7 +6,7 @@ First, install the dependencies:
 pip install transformers[torch] datasets xformers accelerate evaluate trl
 ```
 
-Then run the training script ```train_llama2_lowrank_lora.py```  with one of the datasets. 
+Then set your HuggingFace token ```hf_auth``` and run the training script ```train_llama2_lowrank_lora.py```  with one of the datasets. 
 
 If you want to use the model for ~25-30% faster prediction, you can merge the weights via the following command:
 ```Python
