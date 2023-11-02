@@ -14,21 +14,21 @@
 </head>
 
 <body>
-    <article id="b0f92218-e672-4c1f-a44d-8b5369550c15" class="page sans">
+    <article id="low-rank-sparsity" class="page sans">
         <header>
             <h1 class="page-title">Low-Rank Pruning of Llama2</h1>
             
         </header>
         <div class="page-body">
-            <p id="ca06c94f-113d-4350-9f1d-3784d3ff1a0c" class=""><a href="https://scholar.google.com/citations?user=LxweMX4AAAAJ&hl=en"><mark
+            <p><a href="https://scholar.google.com/citations?user=LxweMX4AAAAJ&hl=en"><mark
                         class="highlight-gray">Hicham Badri</mark></a><mark class="highlight-gray">, </mark><a
                     href="https://scholar.google.com/citations?user=HxZDDzUAAAAJ&hl=en"><mark class="highlight-gray">Appu Shaji</mark></a><mark
                     class="highlight-gray"></mark></p>
-                    <p><mark class="highlight-gray">Mobius Labs GmbH</mark></p>
-            <hr id="b060532c-9954-4b51-8fda-d07da8aa383b" />
-            <p id="7fc3842a-638f-40a0-ad38-613ff019fa6e" class="">In the ever-evolving landscape of artificial intelligence (AI), one undeniable trend has emerged in recent years: the relentless growth in the size and complexity of machine learning models. More specifically, large language models (LLMs) that mainly rely on transformers as building blocks, are reaching a substantial number of parameters and require a significant amount of compute that is expected to increase with larger and larger models being released. 
+            <p><mark class="highlight-gray">Mobius Labs GmbH</mark></p>
+            <hr  />
+            <p>In the ever-evolving landscape of artificial intelligence (AI), one undeniable trend has emerged in recent years: the relentless growth in the size and complexity of machine learning models. More specifically, large language models (LLMs) that mainly rely on transformers as building blocks, are reaching a substantial number of parameters and require a significant amount of compute that is expected to increase with larger and larger models being released. 
             </p>
-            <p id="3fcf90e4-f19a-4617-9d9d-b8de9f8dc8d3" class="">In this article, we explore low-rankness as a pruning technique of the LLama2-7B base model. We show that, by splitting almost all the linear layer weights into low-rank pairs <em>without fine-tuning</em> and leveraging LoRA for custom training, we can achieve the following without <em>implementing custom kernels</em>:
+            <p>In this article, we explore low-rankness as a pruning technique of the LLama2-7B base model. We show that, by splitting almost all the linear layer weights into low-rank pairs <em>without fine-tuning</em> and leveraging LoRA for custom training, we can achieve the following without <em>implementing custom kernels</em>:
                 <ul>
                     <li>~50% reduction in the number of parameters.</li>
                     <li>Up to  ~50% faster training vs. bitsandbytes’s 8-bit quantization.</li>
@@ -44,22 +44,20 @@
                     href="https://huggingface.co/princeton-nlp/Sheared-LLaMA-1.3B">Sheared-LLaMA-1.3B</a>, <a
                     href="https://huggingface.co/princeton-nlp/Sheared-LLaMA-2.7B">Sheared-LLaMA-2.7B</a>
             </p> -->
-            <hr id="2723ddd6-073a-4bfb-ab0b-b8c73212c290" />
-            <div id="7d921bae-a457-483b-a01d-e3317d6ba238" class="column-list">
-                <div id="59ac2e7a-85a1-46a3-a409-3c338efe58a0" style="width:32%" class="column">
-                    <p id="73f8efb1-f832-438d-b4ad-29d4a3d58bff" class="">
-                    </p>
+            <hr id="header_seperator" />
+            <div class="column-list">
+                <div style="width:32%" class="column">
                     <!-- <p class="page-description"><img src="./baby_aana.png" /></p> -->
-                    <figure id="c580bcb8-ffc8-4fbc-a61a-1cbcfe98c566" class="image" style="text-align:left"><a
+                    <figure class="image" style="text-align:left"><a
                             href="figs/baby_aana.png"><img
                                 style="width:240px"
                                 src="figs/baby_aana.png" /></a>
                     </figure>
-                    <p id="2595eb7c-e99d-4aa7-b0f2-83c7a5d1203b" class="">
+                    <p>
                         <strong><strong><strong><strong><strong><strong><strong>Table of
                                                     Contents</strong></strong></strong></strong></strong></strong></strong>
                     </p>
-                    <nav id="b3fb94d2-802c-48dd-bb18-9d1c007a4e18" class="block-color-gray table_of_contents">
+                    <nav class="block-color-gray table_of_contents">
                         <div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link"
                                 href="#intro">Introduction</a></div>
                         <div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link"
@@ -84,7 +82,7 @@
                     </nav>
 
                 </div>
-                <div id="b94ff864-b6c7-4fc4-b84b-c193e4b009b0" style="width:75%" class="column">
+                <div  style="width:75%" class="column">
                     <h2 id="intro" class="">Introduction</h2>
                     <p>Model pruning refers to the process of removing redundant information from machine learning models to make them “leaner”. As a result, the pruned model is smaller in size and should run faster which is suitable for deployment on resource-constrained devices or in real-time applications. Pruning can be combined with other techniques such as quantization to further optimize runtime. The most popular pruning approaches are based on discarding neurons, layer channels or entire layers. This kind of pruning is referred to as “sparsification”. 
                     </p>
