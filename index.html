@@ -135,8 +135,8 @@
 
                     <h4>Training Mode</h4>
                     <ul>
-                        <li>For each linear layer, we run SVD on the weights of the linear layers <b>W</b> to get the <b>A</b>,<b>B</b> matrix pairs such that <b>AB</b>estimates <b>W</b> using the predefined max_rank value to truncate the singular values as explained in the previous section. The only layer that we keep full-rank is the <b>v_proj</b>. This is because the rank of the weights of this layer tends to be higher.</li>
-                        <li>We freeze all the weights and use LoRA with the r parameter to create the new trainable parameters.
+                        <li>For each linear layer, we run SVD on the weights of the linear layers <b>W</b> to get the <b>A</b>,<b>B</b> matrix pairs such that the matrix multiplication <b>AB</b> estimates <b>W</b> using the predefined max_rank value to truncate the singular values as explained in the previous section. The only layer that we keep full-rank is the <b>v_proj</b>. This is because the rank of the weights of this layer tends to be higher.</li>
+                        <li>We freeze all the weights and use LoRA with the <b>r</b> parameter to create the new trainable parameters.
                         </li>
                     </ul>
 
@@ -147,11 +147,10 @@
                         <li><a href="https://www.ic.unicamp.br/~meidanis/PUB/Doutorado/2012-Biller/Marsaglia1964.pdf">Since the rank of the sum of two matrices is lower or equal than the sum of their ranks</a> 
                             $$ {rank({\bf AB}+{\bf A_L} {\bf B_L} ) \le rank({\bf AB}) + rank({\bf A_LB_L})} $$ 
                             we can safely combine the 4 weights by applying truncated SVD on the sum of their matrix multiplications using the sum of their ranks to build the new low-rank pair:
-                            $$ {{\bf AB} + {\bf A_LB_L}  \Rightarrow {\bf \bar{A} \bar{B} }} $$
-                            $$ { rank({\bf AB}) = max rank + r } $$
+                            $$ { rank({\bf AB} + {\bf A_LB_L} ) = maxrank + r } $$
 
                         </li>
-                        <li>Now we can use the new pairs and remove the older A,B and LoRA weights. 
+                        <li>Now we can use the new pairs and remove the older <b>A</b>,<b>B</b> and LoRA weights. 
                         </li>
                     </ul>
                     
@@ -159,11 +158,11 @@
                     <p>The illustration below shows the difference between the standard LoRA approach and the proposed low-rank LoRA merging method. Note that the result is a pair of matrices.</p>
 
 
-                    <figure><img style="width:480px" src="figs/merging.png" /></figure>
+                    <figure><center></center><img style="width:480px" src="figs/merging.png"/></center></figure>
 
                     <p>The code below summarizes the merging logic:</p>
 
-                    <figure><img style="width:640px" src="figs/pseudo-code.png" /></figure>
+                    <figure><center></center><img style="width:640px" src="figs/pseudo-code.png" /></center></figure>
 
                     <h2 id="benchmark">Speed Benchmark</h2>
 
