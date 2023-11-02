@@ -87,10 +87,10 @@
                     <p>Model pruning refers to the process of removing redundant information from machine learning models to make them “leaner”. As a result, the pruned model is smaller in size and should run faster which is suitable for deployment on resource-constrained devices or in real-time applications. Pruning can be combined with other techniques such as quantization to further optimize runtime. The most popular pruning approaches are based on discarding neurons, layer channels or entire layers. This kind of pruning is referred to as “sparsification”. 
                     </p>
 
-                    <p>In practice however, sparse pruning has many limitations. In order to achieve actual speed-up in practice, custom sparsity-aware matrix multiplication (matmul) operations are required. For the moment, this is only partially supported in <a href="https://developer.nvidia.com/blog/accelerating-inference-with-sparsity-using-ampere-and-tensorrt/">Ampere GPUs</a> or on CPUs via <a href="https://neuralmagic.com/">NeuralMagic</a>  . In Pytorch, sparse matrix multiplication operations are not optimized. For example, there is no implementation available of the batched matmul operation with sparse matrices. Rewriting it with the existing operation requires some reshaping and the result is 2-3x slower performance.  
+                    <p>In practice however, sparse pruning has many limitations. In order to achieve actual speed-up in practice, custom sparsity-aware matrix multiplication (<i>matmul</i>) operations are required. For the moment, this is only partially supported in <a href="https://developer.nvidia.com/blog/accelerating-inference-with-sparsity-using-ampere-and-tensorrt/">Ampere GPUs</a> or on CPUs via <a href="https://neuralmagic.com/">NeuralMagic</a>  . In Pytorch, sparse matrix multiplication operations are not optimized. For example, there is no implementation available of the batched <i>matmul</i> operation with sparse matrices. Rewriting it with the existing operation requires some reshaping and the result is 2-3x slower performance.  
                     </p>
 
-                    <p>Structured sparsity on the other hand consists in discarding weights in a structured way. For instance, we can remove columns, remove channels, block matrices, etc. This way, in theory, the model can be pruned without requiring specialized software/hardware for optimized runtime. Some structured sparsity methods still require optimized software to achieve faster runtime. For example, block-sparsity requires implementing dedicated GPU kernels for block-sparse matmul such as <a href="https://openai.com/research/block-sparse-gpu-kernels">https://openai.com/research/block-sparse-gpu-kernels</a>.
+                    <p>Structured sparsity on the other hand consists in discarding weights in a structured way. For instance, we can remove columns, remove channels, block matrices, etc. This way, in theory, the model can be pruned without requiring specialized software/hardware for optimized runtime. Some structured sparsity methods still require optimized software to achieve faster runtime. For example, block-sparsity requires implementing dedicated GPU kernels for block-sparse <i>matmul</i> such as <a href="https://openai.com/research/block-sparse-gpu-kernels">https://openai.com/research/block-sparse-gpu-kernels</a>.
                     </p>
 
                     <p>In practice however, structured sparsity cannot be pushed too far without a larger drop in accuracy compared to unstructured sparsity. As a result, the performance gain is usually very limited. 
@@ -101,11 +101,11 @@
            
 
                     <h2 id="lowrankpruning" class="">Low Rank Pruning</h2>
-                    The idea of low-rank pruning revolves around factorizing the weight matrix W of a linear layer as a matrix multiplication of a pair of two matrices A and B, such that A and B have much less columns and rows respectively:
+                    The idea of low-rank pruning revolves around factorizing the weight matrix <b>W</b> of a linear layer as a matrix multiplication of a pair of two matrices <b>A</b> and <b>B</b>, such that <b>A</b> and <b>B</b> have much less columns and rows respectively:
 
                     <figure id="low_rank"><img style="width:480px" src="figs/Matrix2.png" /></figure>
                     
-                    <p>Ideally, we would like the chain matmul operation with A and B to be faster and take less memory, while the overall model prediction stays as close as possible to the original prediction with unaltered weights. We refer to the number of columns of A/number of rows of B as the maximum rank (denoted by max_rank) in the rest of the article. </p>
+                    <p>Ideally, we would like the chain <i>matmul</i> operation with <b>A</b> and <b>B</b> to be faster and take less memory, while the overall model prediction stays as close as possible to the original prediction with unaltered weights. We refer to the number of columns of <b>A</b>/number of rows of <b>B</b> as the maximum rank (denoted by <i>max_rank</i>) in the rest of the article. </p>
 
                     <p>There are various ways to achieve such a factorization (SVD, QR, etc.). We use the SVD decomposition as follows to get the matrix pairs: </p>
 
@@ -121,7 +121,7 @@
 
 
                     <h2 id="pruningllama2" class="">Low-Rank Pruning of Llama2 Models</h2>
-                    <p>When we analyze the weights of the Llama2-7B model, we find that many are in fact already low-rank, especially those of the attention layers (Q,K,O). The graph x shows the distribution of the average normalized singular values per layer type. We normalize the singular values by the highest value (which is the same as normalizing the matrix weight by its L2 norm) so we can average the singular values across the layers and get a single plot per layer type. We can clearly see that most of the energy is concentrated in a subset of the singular values. More specifically, about 80% of the energy is concentrated in the first half of the singular values of the Q,K,V,O layers of the attention modules. The first layers of the attention module tend to have an even lower-rank. For instance, 88% of the energy of the first Q layer is concentrated in the first 1024 (25%) of its singular values.</p>
+                    <p>When we analyze the weights of the Llama2-7B model, we find that many are in fact already low-rank, especially those of the attention layers (<b>Q</b>,<b>K</b>,<b>O</b>). The graph below shows the distribution of the average normalized singular values per layer type. We normalize the singular values by the highest value (which is the same as normalizing the matrix weight by its L2 norm) so we can average the singular values across the layers and get a single plot per layer type. We can clearly see that most of the energy is concentrated in a subset of the singular values. More specifically, about 80% of the energy is concentrated in the first half of the singular values of the <b>Q</b>,<b>K</b>,<b>V</b>,<b>O</b> layers of the attention modules. The first layers of the attention module tend to have an even lower-rank. For instance, 88% of the energy of the first <b>Q</b> layer is concentrated in the first 1024 (25%) of its singular values.</p>
 
                     <figure><img style="width:480px;" src="figs/svd_distribution.png"/></figure>
 
@@ -135,7 +135,7 @@
 
                     <h4>Training Mode</h4>
                     <ul>
-                        <li>For each linear layer, we run SVD on the weights of the linear layers <b>W</b> to get the <b>A</b>,<b>B</b> matrix pairs such that the matrix multiplication <b>AB</b> estimates <b>W</b> using the predefined max_rank value to truncate the singular values as explained in the previous section. The only layer that we keep full-rank is the <b>v_proj</b>. This is because the rank of the weights of this layer tends to be higher.</li>
+                        <li>For each linear layer, we run SVD on the weights of the linear layers <b>W</b> to get the <b>A</b>,<b>B</b> matrix pairs such that the matrix multiplication <b>AB</b> estimates <b>W</b> using the predefined <i>max_rank</i> value to truncate the singular values as explained in the previous section. The only layer that we keep full-rank is the <b>v_proj</b>. This is because the rank of the weights of this layer tends to be higher.</li>
                         <li>We freeze all the weights and use LoRA with the <b>r</b> parameter to create the new trainable parameters.
                         </li>
                     </ul>
@@ -175,7 +175,7 @@
                     </figure>
 
                     <h2 id="dataset">Dataset Performance</h2>
-                    <p>We present performance results on 5 datasets, evaluating both the unaltered and pruned LLama2-7B models using the perplexity metric. In the case of the original model, we use the default LoRA settings (r=8). Conversely, in the pruned model, we raise the LoRA rank to 32. Remarkably, the pruned model exhibits strong performance despite the removal of approximately half of the original weights, all without any fine-tuning!</p>
+                    <p>We present performance results on 5 datasets, evaluating both the unaltered and pruned LLama2-7B models using the perplexity metric. In the case of the original model, we use the default LoRA settings (<b>r</b>=8). Conversely, in the pruned model, we raise the LoRA rank to 32. Remarkably, the pruned model exhibits strong performance despite the removal of approximately half of the original weights, all without any fine-tuning!</p>
 
                     <p>It is worth noting that the performance of the pruned model on OpenOrca-1M is better than that of the original model on 100k samples. This indicates that the pruned model has the capacity to learn but needs more samples to compensate for the noise introduced by pruning.</p>
 
