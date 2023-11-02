@@ -985,9 +985,9 @@
                     <p>We report the inference speed-up in comparison to the original LLama2-7B model. We employ the HuggingFace implementations with fp16 precision. When we merge the LoRA weights into the original model, the resulting matrices maintain the same dimensions as those in the original model. However, in the pruned version, the rank of the matrices increases by the LoRA rank r. For instance, in the attention layers, the initial weight matrix W has dimensions of 4096x4096. By using a rank of 2048 and a LoRA rank of 32, the resulting pairs A and B will be 4096x2080 and 2080x4096, respectively. Reducing the rank leads to a faster speed boost but has a detrimental effect on prediction accuracy.</p>
 
 
-                    <figure style="display:flex; align-items: center; justify-content: center;">
-                        <img style="margin-right: 10px; max-width: 100%; height: auto;" src="figs/titan.png" />
-                        <img style="margin-right: 10px; max-width: 100%; height: auto;" src="figs/a100.png" />
+                    <figure style="align-items: left; justify-content: left;">
+                        <img style="margin-right: 10px; max-width: 75%; height: auto;" src="figs/titan.png" />
+                        <img style="margin-right: 10px; max-width: 75%; height: auto;" src="figs/a100.png" />
                     </figure>
 
                     <h2 id="dataset">Dataset Performance</h2>
