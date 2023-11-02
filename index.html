@@ -126,7 +126,7 @@
                     <figure><img style="width:480px;" src="figs/svd_distribution.png"/></figure>
 
 
-                    <p>In practice, we found that the rank of the original attention and mlp layers can be reduced from 4096 to 1024 and 2048 respectively, while still delivering good performance after LoRA training. This is a 4x rank reduction in the attention layers and 2x for the MLP layers, which is quite aggressive given that these weights are frozen after pruning. 
+                    <p>In practice, we found that the rank of the original attention and MLP layers can be reduced from 4096 to 1024 and 2048 respectively, while still delivering good performance after LoRA training. This is a 4x rank reduction in the attention layers and 2x for the MLP layers, which is quite aggressive given that these weights are frozen after pruning. 
                     </p>
 
                     <p>We summarize the steps for training and inference using the proposed approach:
